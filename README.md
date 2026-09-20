@@ -1,6 +1,6 @@
 # Linux Mint Baseline Deployment
 
-A single, idempotent script that takes a fresh Linux Mint install (Cinnamon) to a fully provisioned baseline: native toolkit, full browser stack, and a split-phase update workflow with desktop launchers.
+A single, idempotent script that takes a fresh Linux Mint install (Cinnamon) to a fully provisioned baseline: base tooling, the shared app loadout, and a split-phase update workflow with desktop launchers.
 
 Full background and rationale: [`Mint-Deployment-Guide.md`](./Mint-Deployment-Guide.md)
 
@@ -25,21 +25,11 @@ Run as your normal user, not root — it calls `sudo` internally where needed.
 ## What it does
 
 - Detects CPU vendor and installs the matching microcode package (`intel-microcode` / `amd64-microcode`)
-- Installs the native toolkit: `firefox`, `telegram-desktop`, `shotcut`, `gimp`, `glances`, `vlc`, `p7zip-full`, plus build tooling
+- Installs base tooling (firefox, glances, p7zip, build tools, curl, git)
 - Fetches `fastfetch` and `duf` directly from their GitHub releases — neither is reliably current in Mint's base repos
 - Confirms Flathub is configured (Mint ships it preconfigured by default, unlike Debian/Ubuntu — this checks rather than assumes)
-- Installs Chrome (direct `.deb`), Brave (official install script), and Edge (official apt repo) — each browser uses a different install mechanism, same as `debian-deploy`
+- Installs the app loadout from clone-panda-msi (its Flathub list, plus Discord, Kdenlive, OBS, Meld, and Telegram as Flatpaks)
 - Creates `update-core.sh` / `update-apps.sh` and matching desktop launchers
-
-## How package sources break down on Mint
-
-| Source | Detail |
-|---|---|
-| Official apt packages | Everything from Mint/Ubuntu's own repos — most of the toolkit, including VLC (Mint enables universe/multiverse by default, unlike Debian) |
-| Third-party apt repos | Brave and Edge each add their own repo; once added, apt treats them like official packages |
-| Direct `.deb` installs | Chrome ships no apt repo by default, so it's installed from a downloaded `.deb` |
-| GitHub-release binaries | `fastfetch` and `duf` aren't reliably packaged for Mint, so they're fetched directly from their GitHub releases |
-| Flatpak | Preconfigured out of the box on Mint — this script confirms it rather than setting it up from scratch |
 
 ## After running
 

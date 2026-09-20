@@ -21,7 +21,7 @@ sudo apt update
 
 echo "Installing native toolkit..."
 sudo apt install -y \
-  firefox telegram-desktop shotcut gimp glances vlc p7zip-full \
+  firefox glances p7zip-full \
   build-essential curl wget git software-properties-common
 
 # --- fastfetch + duf (not reliably current in Mint's base repos) ---
@@ -54,36 +54,6 @@ if ! flatpak remote-list | grep -q flathub; then
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 else
   echo "Flathub already configured, skipping"
-fi
-
-# --- Browser stack ---
-# Chrome: no apt repo by default, direct .deb
-if ! command -v google-chrome &> /dev/null; then
-  echo "Installing Google Chrome..."
-  curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
-  sudo apt install -y /tmp/chrome.deb
-else
-  echo "Chrome already installed, skipping"
-fi
-
-# Brave: official apt repo
-if ! command -v brave-browser &> /dev/null; then
-  echo "Installing Brave..."
-  curl -fsS https://dl.brave.com/install.sh | sh
-else
-  echo "Brave already installed, skipping"
-fi
-
-# Edge: official apt repo
-if ! command -v microsoft-edge-stable &> /dev/null; then
-  echo "Installing Microsoft Edge..."
-  curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft.gpg > /dev/null
-  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | \
-    sudo tee /etc/apt/sources.list.d/microsoft-edge.list > /dev/null
-  sudo apt update
-  sudo apt install -y microsoft-edge-stable
-else
-  echo "Edge already installed, skipping"
 fi
 
 # --- Update launchers ---
@@ -124,6 +94,16 @@ Categories=System;
 EOF
 
 echo ""
+# --- App loadout (shared with clone-panda-msi) ---
+echo "Installing app loadout from clone-panda-msi..."
+LOADOUT_DIR="$HOME/.local/share/clone-panda-msi"
+if [ -d "$LOADOUT_DIR/.git" ]; then
+  git -C "$LOADOUT_DIR" pull --ff-only
+else
+  git clone https://github.com/GrimDaTrashPanda/clone-panda-msi.git "$LOADOUT_DIR"
+fi
+bash "$LOADOUT_DIR/install-loadout.sh"
+
 echo "=== Done ==="
 echo "Press Super, search 'Update' — confirm both launchers appear."
 echo "No Wayland step needed — Mint Cinnamon runs X11 by default."
