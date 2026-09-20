@@ -44,3 +44,7 @@ Every install step checks for an existing binary or repo file before acting. Re-
 ## A note on the "split update" naming
 
 Same as `debian-deploy`: apt doesn't cleanly separate "trusted official" from "third-party repo" packages, so `update-core.sh` really covers everything apt-tracked (including Brave/Edge once added), and `update-apps.sh` only covers Flatpak. Kept as two launchers for a consistent update habit across machines, not because the split is deeply meaningful on Mint itself.
+
+## Changing the apps
+
+The app list isn't in this repo. It lives in [clone-panda-msi](https://github.com/GrimDaTrashPanda/clone-panda-msi). Edit `pkglist-flatpak.txt` there and every deploy repo picks it up on its next run.
